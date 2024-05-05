@@ -4,13 +4,10 @@ server:
     context-path: /identity
 
 spring:
-  application:
-    name: identity-service
   datasource:
-    url: "jdbc:mysql://localhost:3306/bookteria_identity"
-    driverClassName: "com.mysql.cj.jdbc.Driver"
+    url: "jdbc:mysql://localhost:3306/identity_service"
     username: root
-    password: root
+    password: sql@2024
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,7 +15,3 @@ spring:
 
 jwt:
   signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
-
-app:
-  services:
-    profile: http://localhost:8081/profile

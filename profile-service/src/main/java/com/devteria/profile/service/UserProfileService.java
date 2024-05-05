@@ -1,5 +1,6 @@
 package com.devteria.profile.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.devteria.profile.dto.request.ProfileCreationRequest;
@@ -8,18 +9,19 @@ import com.devteria.profile.entity.UserProfile;
 import com.devteria.profile.mapper.UserProfileMapper;
 import com.devteria.profile.repository.UserProfileRepository;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+// @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserProfileService {
-    UserProfileRepository userProfileRepository;
-    UserProfileMapper userProfileMapper;
+    @Autowired
+    private UserProfileRepository userProfileRepository;
+
+    @Autowired
+    private UserProfileMapper userProfileMapper;
 
     public UserProfileResponse createProfile(ProfileCreationRequest request) {
         UserProfile userProfile = userProfileMapper.toUserProfile(request);

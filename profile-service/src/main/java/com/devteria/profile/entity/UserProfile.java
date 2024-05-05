@@ -9,25 +9,24 @@ import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+// @FieldDefaults(level = AccessLevel.PRIVATE)
 @Node("user_profile")
 public class UserProfile {
     @Id
     @GeneratedValue(generatorClass = UUIDStringGenerator.class)
-    String id;
+    private String id;
 
     @Property("userId")
-    String userId;
+    private String userId;
 
-    String firstName;
-    String lastName;
-    LocalDate dob;
-    String city;
+    private String firstName;
+    private String lastName;
+    private LocalDate dob;
+    private String city;
 }
