@@ -1,7 +1,10 @@
 package com.devteria.gateway.configuration;
 
 
+import com.devteria.gateway.dto.ApiResponse;
 import com.devteria.gateway.service.IdentiyService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -11,6 +14,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -28,6 +32,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     IdentiyService identiyService;
 
+    ObjectMapper objectMapper;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         log.info("Enter authentication filter");
@@ -44,13 +50,18 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
          * delegate identity service with api instropect token.
          * return Api response with 401
          */
-        identiyService.introspect(token).subscribe(introspectResponseApiResponse -> {
-            log.info("Result: {}", introspectResponseApiResponse.getResult().isValid());
-        });
+
+        return identiyService.introspect(token).flatMap(introspectResponseApiResponse -> {
+            //log.info("Result: {}", introspectResponseApiResponse.getResult().isValid());
+            if(introspectResponseApiResponse.getResult().isValid())
+                return chain.filter(exchange);
+            else
+                return unAuthenticated(exchange.getResponse());
+        }).onErrorResume(throwable ->unAuthenticated(exchange.getResponse()) );
 
         
         
-        return chain.filter((exchange));
+
     }
 
     @Override
@@ -60,8 +71,21 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     }
 
     private Mono<Void> unAuthenticated(ServerHttpResponse response){
-        String body = "Unauthenticated1";
+        ApiResponse<?> apiResponse = ApiResponse.builder()
+                .code(1401)
+                .message("Unauthenticated1")
+                .build();
+
+        String body = null;
+        try{
+            body = objectMapper.writeValueAsString(apiResponse);
+        }catch (JsonProcessingException e){
+            throw new RuntimeException(e);
+        }
+
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+
         return response.writeWith(Mono.just(response.bufferFactory().wrap(body.getBytes())));
     }
 }
