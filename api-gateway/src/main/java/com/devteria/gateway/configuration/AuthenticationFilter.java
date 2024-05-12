@@ -41,7 +41,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     //  param is not used in constructor method
     @NonFinal
     private String[] publicEnpoint = {"/identity/auth/.*",
-                            "/identity/users/registation"
+                            "/identity/users/registration"
     };
 
     @NonFinal
