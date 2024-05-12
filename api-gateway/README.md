@@ -9,5 +9,23 @@
           
           
           
- ed:         
-          # Path=${app.api-prefix}/profile/users/**, ${app.api-prefix}/profile/internal/users/**          
+ #ed:         
+          # Path=${app.api-prefix}/profile/users/**, ${app.api-prefix}/profile/internal/users/**    
+          
+          
+  
+  
+  #authorization
+    + get token from api-gate way, ==> config to lay token, di qua filter khong bi chan
+    + edit AuthenticationFilter , "ServerHttpRequest"
+    + Matches endpoint of ServerHttpRequest with list EndPoint is declared in API-getway
+    + Viec khai bao cac public  end point  co the truoc tiep o AuthenticationFilter, hoac dua ra file yml roi day vao.
+    
+    + Viec verify token da duoc api-gate way xu ly, dan toi viec verify o identiy-service la khong can thiet.
+    ==> can thay doi logic cua JwtDecoder
+    
+    + Dang ky security cho profile-service  gom CustomerJwtDecoder, SecurityConfig, JwtAuthenticationEntryPoint
+    + Phan quyen Authorization cho profile-service
+    + Dang ky them cac errorcode va bat exception cho profile-service.
+    
+    
