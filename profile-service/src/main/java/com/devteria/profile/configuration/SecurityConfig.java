@@ -1,4 +1,4 @@
-package com.devteria.identity.configuration;
+package com.devteria.profile.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,8 +7,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,9 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final String[] PUBLIC_ENDPOINTS = {
-        "/users/registration", "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh"
-    };
+    private static final String[] PUBLIC_ENDPOINTS = {};
 
     private final CustomJwtDecoder customJwtDecoder;
 
@@ -32,31 +28,39 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
                 .permitAll()
+                //                        .requestMatchers(HttpMethod.GET,
+                // ADMIN_GET_ENPOINT).hasAuthority("SCOPE_ADMIN")
+                //                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENPOINT).hasAuthority("ROLE_ADMIN")
+                //                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENPOINT).hasRole(Role.ADMIN.name())
                 .anyRequest()
                 .authenticated());
 
-        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
-                        .decoder(customJwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+        httpSecurity.oauth2ResourceServer(
+                oauth2 -> oauth2.jwt(
+                                jwtConfigurer -> jwtConfigurer
+                                        .decoder(customJwtDecoder) /* xac thuc duoc call o day */
+                                        .jwtAuthenticationConverter(
+                                                customJwtAuthenticationConverter()) /*su dung converter customer replace defaul*/)
+                        .authenticationEntryPoint(
+                                new JwtAuthenticationEntryPoint()) /*bat cac request co http status code  401 */
+                // Khong the bat chung tai GlobalExceptionHandler cho nen phai thiet lap rieng cho chung tai config
+                // vi chi su dung rieng biet nen khong can tao bean ma chi can tao 1 doi tuong.
+
+                );
+
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtAuthenticationConverter customJwtAuthenticationConverter() {
+
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(""); /* remove Prefix "ROLE"  */
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-
         return jwtAuthenticationConverter;
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
     }
 }

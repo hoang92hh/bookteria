@@ -2,7 +2,7 @@ package com.devteria.profile.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.devteria.profile.dto.request.ProfileCreationRequest;
@@ -11,19 +11,20 @@ import com.devteria.profile.entity.UserProfile;
 import com.devteria.profile.mapper.UserProfileMapper;
 import com.devteria.profile.repository.UserProfileRepository;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-// @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserProfileService {
-    @Autowired
-    private UserProfileRepository userProfileRepository;
 
-    @Autowired
-    private UserProfileMapper userProfileMapper;
+    UserProfileRepository userProfileRepository;
+
+    UserProfileMapper userProfileMapper;
 
     public UserProfileResponse createProfile(ProfileCreationRequest request) {
         UserProfile userProfile = userProfileMapper.toUserProfile(request);
@@ -39,6 +40,7 @@ public class UserProfileService {
         return userProfileMapper.toUserProfileReponse(userProfile);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserProfileResponse> getAllProfiles() {
         var profiles = userProfileRepository.findAll();
 
