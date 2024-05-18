@@ -21,7 +21,7 @@ This microservice is responsible for:
 `mvn clean package`
 
 
-
+#18.05.2024
 #sercurity-service to service
 khi profile-service duoc thiet lap security, 
 cac request tu phia api-gate-way to profile-service se duoc indentiy service authentication,
@@ -34,6 +34,14 @@ C1. Truyen token tu phia identiy-service cho profile-service de spring xac thuc.
 ==> Trong param gui di phai co token dang nhap truoc do, neu khong co token thi se bi bao loi
 -> them thuoc tinh "Authorization" :"Bear token"
 Them param @RequestHeader String token vao phan mo ta cua FeignClient tuong ung
+
+
+C2. Su dung interceptor de 2 mircoservice co the trao doi voi nhau, 
+ma khong phai gui token qua moi method su dung (gay lap code)
++ Tao mot interceptor implements tu RequestInterceptor
++ Override lai method apply(), trong ta se  setting header for RequestTemplate.header
++ Danh dau interceptor nay thanh mot bean de co the su dung instance toi da.
+
 
 
 

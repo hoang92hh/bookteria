@@ -8,8 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.devteria.identity.constant.PredefinedRole;
 import com.devteria.identity.dto.request.UserCreationRequest;
@@ -57,14 +55,7 @@ public class UserService {
         var profileRequest = profileMapper.toProfileCreationRequest(request);
         profileRequest.setUserId(user.getId());
 
-        /*Get token then to call other micro-service*/
-        ServletRequestAttributes servletRequestAttributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
-        String authHeader = servletRequestAttributes.getRequest().getHeader("Authorization");
-        log.info("Headear : {}", authHeader);
-
-        profileClient.createProfile(authHeader, profileRequest);
+        profileClient.createProfile(profileRequest);
 
         return userMapper.toUserResponse(user);
     }
