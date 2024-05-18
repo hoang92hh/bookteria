@@ -42,6 +42,18 @@ ma khong phai gui token qua moi method su dung (gay lap code)
 + Override lai method apply(), trong ta se  setting header for RequestTemplate.header
 + Danh dau interceptor nay thanh mot bean de co the su dung instance toi da.
 
+C3, Khong danh dau bean, ma khai bao customer RequestInterceptor cho  config FeignClient 
++ them thuoc tinh configuration ={AuthenticationRequestInterceptor.class}
+
+Diem khac nhau giua cach 2 va cach 3
++ neu khong khai bao cu the Interceptor cho tung FeignClient ( internal Globlal)
+ ->thi no se su dung all bean (2,3,4) la con cua RequestInterceptor
++ Khi khai bao cu the Interceptor cho FeignClient thi  no chi su dung this interceptor
++ ngoai ra trong mot vai truong hop can ket noi toi cac service ngoai bo so voi  (external service)
++ cach 3 duoc su dung hieu qua hon
+ 
+
+
 
 
 
