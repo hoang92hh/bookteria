@@ -1,6 +1,5 @@
 package com.devteria.profile.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,17 +9,17 @@ import com.devteria.profile.dto.request.ProfileCreationRequest;
 import com.devteria.profile.dto.response.UserProfileResponse;
 import com.devteria.profile.service.UserProfileService;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequiredArgsConstructor
-// @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/internal")
 public class InternalUserProfileController {
 
-    @Autowired
-    private UserProfileService userProfileService;
+    UserProfileService userProfileService;
 
     @PostMapping("/users")
     UserProfileResponse createProfile(@RequestBody ProfileCreationRequest request) {

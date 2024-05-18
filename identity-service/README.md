@@ -29,3 +29,11 @@ sau do gate-way se router den api cua profiles-service.
 Tuy nhien, cac reques duoc gui tu phia identiy-service to profile-service qua FeignClient thi phia security cua profile-service chan lai
 ==> Branch nay se thiet lap cach authen va author cho api thong qua feignClient giua cac micro-service.
 
+
+C1. Truyen token tu phia identiy-service cho profile-service de spring xac thuc.
+==> Trong param gui di phai co token dang nhap truoc do, neu khong co token thi se bi bao loi
+-> them thuoc tinh "Authorization" :"Bear token"
+Them param @RequestHeader String token vao phan mo ta cua FeignClient tuong ung
+
+
+

@@ -30,27 +30,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-//                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENPOINT).hasAuthority("SCOPE_ADMIN")
-//                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENPOINT).hasAuthority("ROLE_ADMIN")
-//                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENPOINT).hasRole(Role.ADMIN.name())
-                        .anyRequest().authenticated());
+        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                .permitAll()
+                //                        .requestMatchers(HttpMethod.GET,
+                // ADMIN_GET_ENPOINT).hasAuthority("SCOPE_ADMIN")
+                //                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENPOINT).hasAuthority("ROLE_ADMIN")
+                //                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENPOINT).hasRole(Role.ADMIN.name())
+                .anyRequest()
+                .authenticated());
 
-        httpSecurity.oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(
-                                jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)                    /* xac thuc duoc call o day */
-                                        .jwtAuthenticationConverter(customJwtAuthenticationConverter())         /*su dung converter customer replace defaul*/
-                        )
-                                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())         /*bat cac request co http status code  401 */
-                //Khong the bat chung tai GlobalExceptionHandler cho nen phai thiet lap rieng cho chung tai config
-                //vi chi su dung rieng biet nen khong can tao bean ma chi can tao 1 doi tuong.
+        httpSecurity.oauth2ResourceServer(
+                oauth2 -> oauth2.jwt(
+                                jwtConfigurer -> jwtConfigurer
+                                        .decoder(customJwtDecoder) /* xac thuc duoc call o day */
+                                        .jwtAuthenticationConverter(
+                                                customJwtAuthenticationConverter()) /*su dung converter customer replace defaul*/)
+                        .authenticationEntryPoint(
+                                new JwtAuthenticationEntryPoint()) /*bat cac request co http status code  401 */
+                // Khong the bat chung tai GlobalExceptionHandler cho nen phai thiet lap rieng cho chung tai config
+                // vi chi su dung rieng biet nen khong can tao bean ma chi can tao 1 doi tuong.
 
-        );
+                );
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
-
-
 
         return httpSecurity.build();
     }

@@ -8,6 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.devteria.identity.constant.PredefinedRole;
 import com.devteria.identity.dto.request.UserCreationRequest;
@@ -55,7 +57,14 @@ public class UserService {
         var profileRequest = profileMapper.toProfileCreationRequest(request);
         profileRequest.setUserId(user.getId());
 
-        profileClient.createProfile(profileRequest);
+        /*Get token then to call other micro-service*/
+        ServletRequestAttributes servletRequestAttributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        String authHeader = servletRequestAttributes.getRequest().getHeader("Authorization");
+        log.info("Headear : {}", authHeader);
+
+        profileClient.createProfile(authHeader, profileRequest);
 
         return userMapper.toUserResponse(user);
     }
@@ -87,23 +96,22 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    //@anotation  phan quyen truoc khi thuc hien method.(ko co log)
-//    @PreAuthorize("hasRole('ADMIN')")
-    @PreAuthorize("hasAuthority('APPROVE_POST')")
+    // @anotation  phan quyen truoc khi thuc hien method.(ko co log)
+    @PreAuthorize("hasRole('ADMIN')")
+    //    @PreAuthorize("hasAuthority('APPROVE_POST')")
     public List<UserResponse> getUsers() {
         log.info("In method get Users");
-        return userRepository.findAll().stream()
-                .map(userMapper::toUserResponse).toList();
+        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
-
 
     // anotation thuc hien sau khi method duoc thu hien xong (co log), sau do kiem tra quyen de tra data
     // @PostAuthorize("hasRole('ADMIN')")
     @PostAuthorize("returnObject.username ==authentication.name")
-//    @PreAuthorize("returnObject.username ==authentication.name") /* ko dung duoc vi gia tri tra ve null, va exception khi lay thuoc tinh username */
+    //    @PreAuthorize("returnObject.username ==authentication.name") /* ko dung duoc vi gia tri tra ve null, va
+    // exception khi lay thuoc tinh username */
     public UserResponse getUser(String id) {
         log.info("In method get User by Id");
-        return userMapper.toUserResponse(userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+        return userMapper.toUserResponse(
+                userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found")));
     }
 }
