@@ -1,6 +1,8 @@
 package com.devteria.gateway.configuration;
 
 import com.devteria.gateway.repository.IdentityClient;
+import com.devteria.gateway.repository.client.ProfileGatewayClient;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,6 +24,22 @@ public class WebClientConfiguration {
                 .builderFor(WebClientAdapter.create(webClient)).build();
 
         return httpServiceProxyFactory.createClient(IdentityClient.class);
+
+    }
+    
+    @Bean
+    WebClient webClient2(){
+        return WebClient.builder()
+                .baseUrl("http://localhost:8081/profile")
+                .build();
+    }
+    
+    @Bean
+    ProfileGatewayClient proFileClient(WebClient webClient){
+        HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory
+                .builderFor(WebClientAdapter.create(webClient)).build();
+
+        return httpServiceProxyFactory.createClient(ProfileGatewayClient.class);
 
     }
 }
