@@ -28,4 +28,7 @@
     + Phan quyen Authorization cho profile-service
     + Dang ky them cac errorcode va bat exception cho profile-service.
     
-    
+#Thiet lap cau hinh CORS tu phia webapp goi toi
++ Cac thiet lap lien quan den CORS se uu tien thiet lap o module getway, han che thiet lap tung service rieng le
++ CorsWebFilter la mot class danh dau cho cac filter lien quan den CORS
++ 
